@@ -8,7 +8,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     // Anzeige des Upload-Status
     document.getElementById('output').innerText = "Dateien werden hochgeladen...";
 
-    fetch('https://team25.onrender.com', {  // Verwende deine tatsächliche Backend-URL
+    fetch('https://team25.onrender.com/upload', {  // Verwende deine tatsächliche Backend-URL
         method: 'POST',
         body: formData
     })
