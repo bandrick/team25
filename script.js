@@ -2,12 +2,11 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append('file1', document.getElementById('file1').files[0]);
-    formData.append('file2', document.getElementById('file2').files[0]);
+    formData.append('file', document.getElementById('file').files[0]);
 
-    document.getElementById('output').innerText = "Dateien werden hochgeladen...";
+    document.getElementById('output').innerText = "Datei wird hochgeladen...";
 
-    fetch('https://team25.onrender.com/upload', {  // Verwende deine tatsächliche Backend-URL
+    fetch('https://team25.onrender.com/upload', {  // Backend-URL verwenden
         method: 'POST',
         body: formData
     })
@@ -15,7 +14,7 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
         if (!response.ok) {
             throw new Error(`HTTP-Fehler! Status: ${response.status}`);
         }
-        return response.blob();  // Erwarte ein Blob, weil wir ein Bild zurückgeben
+        return response.blob();  // Bild als Blob zurückbekommen
     })
     .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
@@ -24,6 +23,6 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     })
     .catch(error => {
         console.error('Fehler:', error);
-        document.getElementById('output').innerText = `Fehler beim Hochladen oder Verarbeiten der Dateien! Details: ${error.message}`;
+        document.getElementById('output').innerText = `Fehler beim Hochladen oder Verarbeiten der Datei! Details: ${error.message}`;
     });
 });
