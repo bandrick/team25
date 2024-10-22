@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datei-Upload und Berechnung</title>
+    <title>JPEG-Datei-Upload</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Datei-Upload und Berechnung</h1>
+    <h1>JPEG-Datei-Upload und Rückgabe</h1>
     <form id="uploadForm">
-        <label for="file1">Wähle die erste Datei:</label>
-        <input type="file" id="file1" name="file1" required><br><br>
+        <label for="file1">Wähle die erste JPEG-Datei:</label>
+        <input type="file" id="file1" name="file1" accept="image/jpeg" required><br><br>
         
-        <label for="file2">Wähle die zweite Datei:</label>
-        <input type="file" id="file2" name="file2" required><br><br>
+        <label for="file2">Wähle die zweite JPEG-Datei:</label>
+        <input type="file" id="file2" name="file2" accept="image/jpeg" required><br><br>
 
-        <button type="submit">Hochladen und Berechnen</button>
+        <button type="submit">Hochladen und Bearbeiten</button>
     </form>
 
     <!-- Bereich für die Anzeige des Ergebnisses -->
     <div id="output"></div>
+
+    <!-- Bereich zum Anzeigen des zurückgegebenen JPEG -->
+    <img id="returnedImage" style="max-width: 300px; margin-top: 20px;" />
 
     <script src="script.js"></script>
 </body>
