@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JPEG-Datei-Upload</title>
+    <title>Bild-Upload und Verarbeitung</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>JPEG-Datei-Upload und Bearbeitung</h1>
+    <h1>Bild-Upload und Verarbeitung</h1>
     <form id="uploadForm">
-        <label for="file">Wähle eine JPEG-Datei aus:</label>
+        <label for="file">Wähle ein JPEG-Bild aus:</label>
         <input type="file" id="file" name="file" accept="image/jpeg" required><br><br>
 
-        <button type="submit">Hochladen und Bearbeiten</button>
+        <button type="submit">Hochladen und Verarbeiten</button>
     </form>
 
-    <!-- Bereich für die Anzeige des Ergebnisses -->
-    <div id="output"></div>
+    <!-- Bereich für die Anzeige des hochgeladenen Bildes -->
+    <h3>Original Bild:</h3>
+    <img id="uploadedImage" style="max-width: 300px; margin-top: 20px;" />
 
-    <!-- Bereich zum Anzeigen des zurückgegebenen JPEG -->
+    <!-- Bereich für die Anzeige des verarbeiteten Bildes -->
+    <h3>Verarbeitetes Bild:</h3>
     <img id="returnedImage" style="max-width: 300px; margin-top: 20px;" />
+
+    <div id="output"></div>
 
     <script src="script.js"></script>
 </body>
