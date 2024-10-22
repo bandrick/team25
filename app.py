@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS  # CORS importieren
 from PIL import Image
 import io
 
 app = Flask(__name__)
+CORS(app)  # CORS für alle Routen aktivieren
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -15,7 +17,7 @@ def upload_file():
         # Öffne die JPEG-Datei mit PIL (Pillow)
         img = Image.open(file)
 
-        # Beispiel: Konvertiere das Bild in RGB (falls es nicht bereits RGB ist) und skaliere es auf 300x300
+        # Konvertiere das Bild in RGB und skaliere es auf 300x300
         if img.mode != 'RGB':
             img = img.convert('RGB')
         img = img.resize((300, 300))
