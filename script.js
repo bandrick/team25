@@ -2,11 +2,19 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append('file', document.getElementById('file').files[0]);
+    const fileInput = document.getElementById('file');
+    const uploadedFile = fileInput.files[0];
+    formData.append('file', uploadedFile);
 
-    document.getElementById('output').innerText = "Datei wird hochgeladen...";
+    // Zeige das hochgeladene Bild im Frontend an
+    const uploadedImageUrl = URL.createObjectURL(uploadedFile);
+    document.getElementById('uploadedImage').src = uploadedImageUrl;
 
-    fetch('https://team25.onrender.com/upload', {  // Backend-URL verwenden
+    // Anzeige des Upload-Status
+    document.getElementById('output').innerText = "Bild wird verarbeitet...";
+
+    // Sende die Anfrage an das Backend
+    fetch('https://team25.onrender.com/upload', {  // Verwende deine tatsächliche Backend-URL
         method: 'POST',
         body: formData
     })
@@ -14,15 +22,15 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
         if (!response.ok) {
             throw new Error(`HTTP-Fehler! Status: ${response.status}`);
         }
-        return response.blob();  // Bild als Blob zurückbekommen
+        return response.blob();  // Erwarte das verarbeitete Bild als Antwort
     })
     .then(blob => {
-        const imageUrl = URL.createObjectURL(blob);
-        document.getElementById('returnedImage').src = imageUrl;
+        const processedImageUrl = URL.createObjectURL(blob);
+        document.getElementById('returnedImage').src = processedImageUrl;
         document.getElementById('output').innerText = "Bild erfolgreich hochgeladen und verarbeitet!";
     })
     .catch(error => {
         console.error('Fehler:', error);
-        document.getElementById('output').innerText = `Fehler beim Hochladen oder Verarbeiten der Datei! Details: ${error.message}`;
+        document.getElementById('output').innerText = `Fehler beim Hochladen oder Verarbeiten des Bildes! Details: ${error.message}`;
     });
 });
