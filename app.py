@@ -1,36 +1,37 @@
 from flask import Flask, request, jsonify, send_file
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from PIL import Image, ImageEnhance, ImageFilter
+import numpy as np
 import io
 
 app = Flask(__name__)
 
-# Aggressive Vorverarbeitung für Zebrafisch-Embryonen-Bilder
+# Vorverarbeitungsfunktion für Zebrafisch-Embryonen-Bilder
 def preprocess_image(image):
-    # Bild schärfen und Kanten erkennen
+    # 1. Bild schärfen, um feine Details hervorzuheben
     image = image.filter(ImageFilter.SHARPEN)
-    image = image.filter(ImageFilter.FIND_EDGES)
-    contrast_enhancer = ImageEnhance.Contrast(image)
-    image = contrast_enhancer.enhance(3)
-    image = ImageOps.equalize(image)
-    saturation_enhancer = ImageEnhance.Color(image)
-    image = saturation_enhancer.enhance(2)
+
+    # 2. Kontrast verstärken, um Details besser erkennbar zu machen
+    enhancer = ImageEnhance.Contrast(image)
+    image = enhancer.enhance(2)  # Kontrastfaktor erhöhen (z.B. 2)
+
+    # 3. Optional: Rauschunterdrückung durch einen sanften Filter
     image = image.filter(ImageFilter.SMOOTH)
+
+    # 4. Größe auf 224x224 anpassen (falls notwendig für Machine Learning)
     image = image.resize((224, 224))
+
     return image
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
         if 'file' not in request.files:
-            return jsonify({'error': 'Eine Datei ist erforderlich'}), 400
+            return jsonify({'error': 'Eine JPEG-Datei ist erforderlich'}), 400
 
         file = request.files['file']
 
-        # Überprüfen, ob die hochgeladene Datei ein Bild ist
-        try:
-            img = Image.open(file)
-        except IOError:
-            return jsonify({'error': 'Die hochgeladene Datei ist kein gültiges Bild'}), 400
+        # Öffne die JPEG-Datei mit PIL (Pillow)
+        img = Image.open(file)
 
         # Konvertiere das Bild in RGB (falls es nicht bereits RGB ist)
         if img.mode != 'RGB':
