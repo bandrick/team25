@@ -5,32 +5,32 @@ import io
 app = Flask(__name__)
 
 @app.route('/upload', methods=['POST'])
-def upload_files():
+def upload_file():
     try:
-        if 'file1' not in request.files or 'file2' not in request.files:
-            return jsonify({'error': 'Beide JPEG-Dateien sind erforderlich'}), 400
+        if 'file' not in request.files:
+            return jsonify({'error': 'Eine JPEG-Datei ist erforderlich'}), 400
 
-        file1 = request.files['file1']
-        file2 = request.files['file2']
+        file = request.files['file']
 
-        # Öffne die JPEG-Dateien mit PIL (Pillow)
-        img1 = Image.open(file1)
-        img2 = Image.open(file2)
+        # Öffne die JPEG-Datei mit PIL (Pillow)
+        img = Image.open(file)
 
-        # Beispiel: Wir kombinieren die beiden Bilder zu einem neuen
-        new_image = Image.blend(img1, img2, alpha=0.5)
+        # Beispiel: Konvertiere das Bild in RGB (falls es nicht bereits RGB ist) und skaliere es auf 300x300
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        img = img.resize((300, 300))
 
         # Speichere das neue Bild in einem Bytestream
         img_io = io.BytesIO()
-        new_image.save(img_io, 'JPEG')
+        img.save(img_io, 'JPEG')
         img_io.seek(0)
 
-        # Rückgabe der neuen JPEG-Datei
+        # Rückgabe der bearbeiteten JPEG-Datei
         return send_file(img_io, mimetype='image/jpeg')
 
     except Exception as e:
         print(f"Fehler: {e}")
-        return jsonify({'error': 'Fehler bei der Verarbeitung der Dateien!'}), 500
+        return jsonify({'error': 'Fehler bei der Verarbeitung der Datei!'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
