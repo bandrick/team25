@@ -1,23 +1,33 @@
 from flask import Flask, request, jsonify, send_file
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import numpy as np
 import io
 
 app = Flask(__name__)
 
-# Vorverarbeitungsfunktion für Zebrafisch-Embryonen-Bilder
+# Aggressivere Vorverarbeitung für Zebrafisch-Embryonen-Bilder
 def preprocess_image(image):
-    # 1. Bild schärfen, um feine Details hervorzuheben
+    # 1. Schärfen des Bildes (verstärkt die Kanten)
     image = image.filter(ImageFilter.SHARPEN)
 
-    # 2. Kontrast verstärken, um Details besser erkennbar zu machen
-    enhancer = ImageEnhance.Contrast(image)
-    image = enhancer.enhance(2)  # Kontrastfaktor erhöhen (z.B. 2)
+    # 2. Erhöhte Kantendetektion mit dem FIND_EDGES Filter (sehr aggressiv)
+    image = image.filter(ImageFilter.FIND_EDGES)
 
-    # 3. Optional: Rauschunterdrückung durch einen sanften Filter
+    # 3. Kontrast stark erhöhen
+    contrast_enhancer = ImageEnhance.Contrast(image)
+    image = contrast_enhancer.enhance(3)  # Kontrastfaktor 3
+
+    # 4. Histogramm-Ausgleich für gleichmäßigere Helligkeit
+    image = ImageOps.equalize(image)
+
+    # 5. Sättigung anpassen (stärker betonte Farben)
+    saturation_enhancer = ImageEnhance.Color(image)
+    image = saturation_enhancer.enhance(2)  # Sättigung erhöhen
+
+    # 6. Rauschunterdrückung durch leichten Glättungsfilter (optional)
     image = image.filter(ImageFilter.SMOOTH)
 
-    # 4. Größe auf 224x224 anpassen (falls notwendig für Machine Learning)
+    # 7. Größe auf 224x224 anpassen
     image = image.resize((224, 224))
 
     return image
