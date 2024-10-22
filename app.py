@@ -10,7 +10,6 @@ CORS(app)  # Aktiviere CORS für alle Routen
 def upload_file():
     try:
         if 'file' not in request.files:
-            print("Keine Datei hochgeladen")
             return jsonify({'error': 'Eine Datei ist erforderlich'}), 400
 
         file = request.files['file']
@@ -18,14 +17,11 @@ def upload_file():
         # Überprüfen, ob die hochgeladene Datei ein Bild ist
         try:
             img = Image.open(file)
-            print("Datei erfolgreich als Bild erkannt.")
         except IOError:
-            print("Die hochgeladene Datei ist kein gültiges Bild")
             return jsonify({'error': 'Die hochgeladene Datei ist kein gültiges Bild'}), 400
 
         # Konvertiere das Bild in RGB (falls es nicht bereits RGB ist)
         if img.mode != 'RGB':
-            print("Bild wird in RGB konvertiert")
             img = img.convert('RGB')
 
         # Beispiel-Vorverarbeitung (Schärfen, Kanten erkennen)
@@ -37,7 +33,6 @@ def upload_file():
         img.save(img_io, 'JPEG')
         img_io.seek(0)
 
-        print("Bildverarbeitung abgeschlossen, Bild wird zurückgegeben")
         # Rückgabe des bearbeiteten Bildes
         return send_file(img_io, mimetype='image/jpeg')
 
