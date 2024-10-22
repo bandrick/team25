@@ -1,50 +1,43 @@
 from flask import Flask, request, jsonify, send_file
-from PIL import Image, ImageEnhance, ImageFilter
-import numpy as np
+from flask_cors import CORS  # Importiere CORS
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import io
 
 app = Flask(__name__)
-
-# Vorverarbeitungsfunktion für Zebrafisch-Embryonen-Bilder
-def preprocess_image(image):
-    # 1. Bild schärfen, um feine Details hervorzuheben
-    image = image.filter(ImageFilter.SHARPEN)
-
-    # 2. Kontrast verstärken, um Details besser erkennbar zu machen
-    enhancer = ImageEnhance.Contrast(image)
-    image = enhancer.enhance(2)  # Kontrastfaktor erhöhen (z.B. 2)
-
-    # 3. Optional: Rauschunterdrückung durch einen sanften Filter
-    image = image.filter(ImageFilter.SMOOTH)
-
-    # 4. Größe auf 224x224 anpassen (falls notwendig für Machine Learning)
-    image = image.resize((224, 224))
-
-    return image
+CORS(app)  # Aktiviere CORS für alle Routen
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
         if 'file' not in request.files:
-            return jsonify({'error': 'Eine JPEG-Datei ist erforderlich'}), 400
+            print("Keine Datei hochgeladen")
+            return jsonify({'error': 'Eine Datei ist erforderlich'}), 400
 
         file = request.files['file']
 
-        # Öffne die JPEG-Datei mit PIL (Pillow)
-        img = Image.open(file)
+        # Überprüfen, ob die hochgeladene Datei ein Bild ist
+        try:
+            img = Image.open(file)
+            print("Datei erfolgreich als Bild erkannt.")
+        except IOError:
+            print("Die hochgeladene Datei ist kein gültiges Bild")
+            return jsonify({'error': 'Die hochgeladene Datei ist kein gültiges Bild'}), 400
 
         # Konvertiere das Bild in RGB (falls es nicht bereits RGB ist)
         if img.mode != 'RGB':
+            print("Bild wird in RGB konvertiert")
             img = img.convert('RGB')
 
-        # Wende die Bildvorverarbeitung an
-        processed_image = preprocess_image(img)
+        # Beispiel-Vorverarbeitung (Schärfen, Kanten erkennen)
+        img = img.filter(ImageFilter.SHARPEN)
+        img = img.filter(ImageFilter.FIND_EDGES)
 
         # Speichere das neue Bild in einem Bytestream
         img_io = io.BytesIO()
-        processed_image.save(img_io, 'JPEG')
+        img.save(img_io, 'JPEG')
         img_io.seek(0)
 
+        print("Bildverarbeitung abgeschlossen, Bild wird zurückgegeben")
         # Rückgabe des bearbeiteten Bildes
         return send_file(img_io, mimetype='image/jpeg')
 
